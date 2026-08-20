@@ -1,0 +1,15 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+data/
+
+# Virtual environments
+.venv
+
+# Personal project handoff
+notes/context.md
+notes/CONTEXT.md
