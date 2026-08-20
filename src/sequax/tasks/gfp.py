@@ -43,7 +43,7 @@ class GFPSequence(SequenceEnv):
 def load_gfp_data(x_path: str | Path, y_path: str | Path) -> tuple[np.ndarray, np.ndarray]:
     """Load GFP sequences and add the environment's special tokens."""
     x = np.load(x_path).astype(np.int32) + GFPSequence.alphabet.index("A")
-    y = np.load(y_path).astype(np.float32)
+    y = np.load(y_path).astype(np.float32).reshape(-1)
     bos = np.full((x.shape[0], 1), GFPSequence.alphabet.index("BOS"), dtype=np.int32)
     eos = np.full((x.shape[0], 1), GFPSequence.alphabet.index("EOS"), dtype=np.int32)
     return np.concatenate([bos, x, eos], axis=1), y

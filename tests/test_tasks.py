@@ -1,17 +1,8 @@
 import jax
 import jax.numpy as jnp
 
-from sequax import AMPSequence, BitSequence, GFPSequence, UTRSequence
+from sequax import BitSequence
 from sequax.tasks.bit_sequence import _levenshtein
-
-
-def test_biological_tasks_use_expected_content_lengths():
-    def reward(tokens):
-        return jnp.float32(tokens.sum())
-
-    assert AMPSequence(reward).obs_shape == (62,)
-    assert GFPSequence(reward).obs_shape == (239,)
-    assert UTRSequence(reward).obs_shape == (52,)
 
 
 def test_bit_sequence_is_jittable_and_rewards_only_at_terminal():

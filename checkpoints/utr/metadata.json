@@ -1,0 +1,18 @@
+{
+  "model": {
+    "num_tokens": 7,
+    "embed_dim": 64,
+    "hidden_dim": 64,
+    "output_dim": 1,
+    "num_layers": 4,
+    "num_heads": 8,
+    "pad_token_id": 1,
+    "dropout_rate": 0.0
+  },
+  "validation": {
+    "minimum": -2.630967617034912,
+    "maximum": 1.4054794311523438,
+    "mean": -0.0074492827989161015,
+    "std": 0.952516496181488
+  }
+}

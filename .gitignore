@@ -9,7 +9,9 @@ data/
 
 # Virtual environments
 .venv
+uv.lock
 
-# Personal project handoff
-notes/context.md
+# Agents
 notes/CONTEXT.md
+AGENTS.md
+CLAUDE.md

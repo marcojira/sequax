@@ -29,7 +29,7 @@ AMP_TRAINING_CONFIG = TrainingConfig(
     objective="classification",
     batch_size=256,
     learning_rate=1e-4,
-    patience=15,
+    patience=5,
 )
 GFP_TRAINING_CONFIG = TrainingConfig(
     objective="regression",
@@ -41,7 +41,7 @@ UTR_TRAINING_CONFIG = TrainingConfig(
     objective="regression",
     batch_size=128,
     learning_rate=1e-4,
-    patience=15,
+    patience=5,
 )
 
 

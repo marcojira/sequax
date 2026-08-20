@@ -1,0 +1,1 @@
+Checkpoint commit was successful to /home/mila/m/marco.jiralerspong/active/sequax/checkpoints/gfp/params

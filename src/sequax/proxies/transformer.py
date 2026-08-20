@@ -31,8 +31,11 @@ class EncoderBlock(nnx.Module):
         self.attention = nnx.MultiHeadAttention(
             num_heads=config.num_heads,
             in_features=config.embed_dim,
-            qkv_features=config.embed_dim,
+            qkv_features=config.num_heads * config.embed_dim,
             out_features=config.embed_dim,
+            kernel_init=nnx.initializers.variance_scaling(
+                2 / config.num_layers, "fan_in", "truncated_normal"
+            ),
             dropout_rate=0.0,
             decode=False,
             rngs=rngs,
@@ -70,7 +73,12 @@ class TransformerProxy(nnx.Module):
 
     def __init__(self, config: TransformerConfig, *, rngs: nnx.Rngs):
         self.config = config
-        self.embedding = nnx.Embed(config.num_tokens, config.embed_dim, rngs=rngs)
+        self.embedding = nnx.Embed(
+            config.num_tokens,
+            config.embed_dim,
+            embedding_init=nnx.initializers.truncated_normal(stddev=1.0),
+            rngs=rngs,
+        )
         self.blocks = nnx.List([EncoderBlock(config, rngs=rngs) for _ in range(config.num_layers)])
         self.hidden_layers = nnx.List(
             [

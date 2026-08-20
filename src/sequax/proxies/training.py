@@ -91,7 +91,7 @@ def train_proxy(
         wrt=nnx.Param,
     )
     dropout_rngs = nnx.Rngs(dropout=config.seed)
-    best_parameters = nnx.state(model, nnx.Param)
+    best_parameters = jax.tree.map(lambda value: value.copy(), nnx.state(model, nnx.Param))
     best_validation_loss = math.inf
     epochs_without_improvement = 0
     train_losses: list[float] = []
@@ -132,11 +132,11 @@ def train_proxy(
 
         if validation_loss < best_validation_loss:
             best_validation_loss = float(validation_loss)
-            best_parameters = nnx.state(model, nnx.Param)
+            best_parameters = jax.tree.map(lambda value: value.copy(), nnx.state(model, nnx.Param))
             epochs_without_improvement = 0
         else:
             epochs_without_improvement += 1
-            if epochs_without_improvement >= config.patience:
+            if epochs_without_improvement > config.patience:
                 break
 
     nnx.update(model, best_parameters)

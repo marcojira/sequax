@@ -1,6 +1,7 @@
 import pickle
 
 import numpy as np
+import pytest
 
 from sequax.tasks import load_amp_data, load_gfp_data, load_utr_data
 
@@ -19,25 +20,20 @@ def test_amp_loader_tokenizes_strings(tmp_path):
     assert np.array_equal(y, np.array([0.0, 1.0], dtype=np.float32))
 
 
-def test_gfp_loader_adds_special_tokens(tmp_path):
+@pytest.mark.parametrize(
+    ("loader", "raw_x", "expected_x"),
+    [
+        (load_gfp_data, [[0, 2]], [[0, 3, 5, 2]]),
+        (load_utr_data, [[0, 2, 3]], [[0, 3, 5, 6, 2]]),
+    ],
+)
+def test_array_loaders_add_special_tokens(tmp_path, loader, raw_x, expected_x):
     x_path = tmp_path / "x.npy"
     y_path = tmp_path / "y.npy"
-    np.save(x_path, np.array([[0, 2]], dtype=np.int32))
-    np.save(y_path, np.array([2.5], dtype=np.float32))
+    np.save(x_path, np.array(raw_x, dtype=np.int32))
+    np.save(y_path, np.array([[2.5]], dtype=np.float32))
 
-    x, y = load_gfp_data(x_path, y_path)
+    x, y = loader(x_path, y_path)
 
-    assert np.array_equal(x, np.array([[0, 3, 5, 2]], dtype=np.int32))
+    assert np.array_equal(x, np.array(expected_x, dtype=np.int32))
     assert np.array_equal(y, np.array([2.5], dtype=np.float32))
-
-
-def test_utr_loader_uses_environment_alphabet(tmp_path):
-    x_path = tmp_path / "x.npy"
-    y_path = tmp_path / "y.npy"
-    np.save(x_path, np.array([[0, 2, 3]], dtype=np.int32))
-    np.save(y_path, np.array([1.5], dtype=np.float32))
-
-    x, y = load_utr_data(x_path, y_path)
-
-    assert np.array_equal(x, np.array([[0, 3, 5, 6, 2]], dtype=np.int32))
-    assert np.array_equal(y, np.array([1.5], dtype=np.float32))
