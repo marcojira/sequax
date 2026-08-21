@@ -4,6 +4,7 @@ import numpy as np
 
 from sequax.env import SequenceEnv
 from sequax.proxies.base import Proxy
+from sequax.proxies.checkpoint import load_proxy
 
 GFP_ALPHABET = (
     "BOS",
@@ -36,7 +37,9 @@ class GFPSequence(SequenceEnv):
     name = "GFP"
     alphabet = GFP_ALPHABET
 
-    def __init__(self, proxy: Proxy, sequence_length: int = 237):
+    def __init__(self, proxy: Proxy | None = None, sequence_length: int = 237):
+        if proxy is None:
+            proxy = load_proxy(Path(__file__).parents[1] / "checkpoints" / "gfp")
         super().__init__(self.alphabet, proxy, sequence_length, sequence_length)
 
 

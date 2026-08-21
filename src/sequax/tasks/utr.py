@@ -4,6 +4,7 @@ import numpy as np
 
 from sequax.env import SequenceEnv
 from sequax.proxies.base import Proxy
+from sequax.proxies.checkpoint import load_proxy
 
 UTR_ALPHABET = ("BOS", "PAD", "EOS", "A", "C", "G", "T")
 
@@ -12,7 +13,9 @@ class UTRSequence(SequenceEnv):
     name = "UTR"
     alphabet = UTR_ALPHABET
 
-    def __init__(self, proxy: Proxy, sequence_length: int = 50):
+    def __init__(self, proxy: Proxy | None = None, sequence_length: int = 50):
+        if proxy is None:
+            proxy = load_proxy(Path(__file__).parents[1] / "checkpoints" / "utr")
         super().__init__(self.alphabet, proxy, sequence_length, sequence_length)
 
 

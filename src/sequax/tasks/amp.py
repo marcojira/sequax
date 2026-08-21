@@ -5,6 +5,7 @@ import numpy as np
 
 from sequax.env import SequenceEnv
 from sequax.proxies.base import Proxy
+from sequax.proxies.checkpoint import load_proxy
 
 AMP_ALPHABET = (
     "BOS",
@@ -37,7 +38,9 @@ class AMPSequence(SequenceEnv):
     name = "AMP"
     alphabet = AMP_ALPHABET
 
-    def __init__(self, proxy: Proxy, min_length: int = 12, max_length: int = 60):
+    def __init__(self, proxy: Proxy | None = None, min_length: int = 12, max_length: int = 60):
+        if proxy is None:
+            proxy = load_proxy(Path(__file__).parents[1] / "checkpoints" / "amp")
         super().__init__(self.alphabet, proxy, min_length, max_length)
 
 

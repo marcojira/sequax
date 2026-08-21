@@ -14,17 +14,18 @@ batching, auto-reset, and episode metrics.
 - `UTRSequence`: fixed-length DNA 5′ UTR generation.
 - `BitSequence`: synthetic bit-string generation with a built-in multimodal reward.
 
-Load a trained proxy checkpoint and pass it to a biological task, or create the self-contained
-synthetic task. See [Training proxies](#training-proxies) to train a proxy.
+Biological tasks load their bundled trained proxy by default. Pass a different proxy to override it,
+or create the self-contained synthetic task. See [Training proxies](#training-proxies) to train a
+proxy.
 
 ```python
 from sequax import AMPSequence, BitSequence
-from sequax.proxies import load_proxy
 
-proxy = load_proxy("checkpoints/amp")
-amp_env = AMPSequence(proxy)
+amp_env = AMPSequence()
 bit_env = BitSequence()
 ```
+
+To use a different proxy, pass it to the task: `AMPSequence(proxy=my_proxy)`.
 
 ## Writing a custom task
 
