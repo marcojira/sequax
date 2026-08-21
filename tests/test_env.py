@@ -6,17 +6,19 @@ from sequax import SequenceEnv
 ALPHABET = ("BOS", "PAD", "EOS", "A", "B")
 
 
-def test_reward_is_zero_until_eos():
+def test_terminal_reward_is_zero_until_eos():
     env = SequenceEnv(ALPHABET, lambda tokens: tokens.sum(), min_length=1, max_length=3)
     state = env.reset()
 
     first_output, state = env.step(state, jnp.int32(3))
-    final_output, state = env.step(state, jnp.int32(2))
-
     assert first_output.reward == 0
     assert not first_output.done
-    assert final_output.reward == state.tokens.sum()
+    assert env.terminal_reward(state) == 0
+
+    final_output, state = env.step(state, jnp.int32(2))
+    assert final_output.reward == 0
     assert final_output.done
+    assert env.terminal_reward(state) == state.tokens.sum()
     assert state.length == 1
 
 
@@ -45,3 +47,4 @@ def test_reset_and_step_can_be_jitted_and_vmapped():
     assert outputs.reward.shape == (4,)
     assert jnp.all(outputs.done)
     assert states.tokens.shape == (4, 4)
+    assert jax.jit(jax.vmap(env.terminal_reward))(states).shape == (4,)

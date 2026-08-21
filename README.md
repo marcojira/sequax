@@ -1,8 +1,8 @@
 # Sequax
 
 Sequax provides JAX environments for autoregressive sequence generation. An episode ends when the
-agent emits EOS. The environment returns zero reward on every earlier step and evaluates the
-completed sequence once, on the terminal step.
+agent emits EOS. `step` never scores a sequence; callers evaluate the completed sequence once with
+`env.terminal_reward(state)`.
 
 The package is unbatched. Callers can use `jax.vmap`, and RL libraries such as Modrax can own
 batching, auto-reset, and episode metrics.
@@ -56,8 +56,10 @@ mask = env.action_mask(state)
 output, state = env.step(state, jnp.int32(3), jax.random.key(1))
 ```
 
-The environment uses the length limits to build its action masks and calls the reward only when EOS
-ends the sequence. Lengths count content tokens, excluding BOS and EOS.
+The environment uses the length limits to build its action masks. `step` never calls the reward
+function; call `env.terminal_reward(state)` on a finished state instead, so a batched rollout scores
+its sequences once at the end rather than at every step. Lengths count content tokens, excluding
+BOS and EOS.
 
 ## Training proxies
 

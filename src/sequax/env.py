@@ -23,7 +23,7 @@ RewardFn = Callable[[Array], Array]
 
 
 class SequenceEnv:
-    """Build a token sequence and score it when EOS is emitted."""
+    """Build a token sequence; `terminal_reward` scores it once EOS has been emitted."""
 
     def __init__(
         self,
@@ -83,7 +83,7 @@ class SequenceEnv:
     def step(
         self, state: SequenceState, action: Array, key: Array | None = None
     ) -> tuple[StepOutput, SequenceState]:
-        """Append one legal token and return a terminal reward on EOS."""
+        """Append one legal token; rewards come from `terminal_reward`, so this returns zero."""
         del key
         mask = self.action_mask(state)
         action = jnp.asarray(action, dtype=jnp.int32)
@@ -101,14 +101,13 @@ class SequenceEnv:
         length = state.length + jnp.asarray(writes_token & ~ends_episode, dtype=state.length.dtype)
         done = state.done | ends_episode
         next_state = SequenceState(tokens, length, done)
-        reward = jax.lax.cond(
-            ends_episode,
-            lambda value: jnp.asarray(self.reward_fn(value), dtype=jnp.float32).squeeze(),
-            lambda value: jnp.zeros((), dtype=jnp.float32),
-            tokens,
-        )
-        output = StepOutput(reward, done, jnp.bool_(False))
+        output = StepOutput(jnp.zeros((), dtype=jnp.float32), done, jnp.bool_(False))
         return output, next_state
+
+    def terminal_reward(self, state: SequenceState) -> Array:
+        """Score a finished sequence, returning zero if the episode has not terminated."""
+        reward = jnp.asarray(self.reward_fn(state.tokens), dtype=jnp.float32).squeeze()
+        return jnp.where(state.done, reward, jnp.zeros((), dtype=jnp.float32))
 
     def decode(self, tokens: Array) -> str:
         """Decode one token array, excluding special tokens."""
