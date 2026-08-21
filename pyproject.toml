@@ -3,14 +3,17 @@ name = "sequax"
 version = "0.1.0"
 description = "JAX environments for terminal-reward sequence generation"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dependencies = [
     "flax>=0.11",
-    "jax[cuda12]>=0.6",
+    "jax>=0.6",
     "numpy>=2",
     "optax>=0.2",
     "orbax-checkpoint>=0.11",
 ]
+
+[project.optional-dependencies]
+cuda12 = ["jax[cuda12]>=0.6"]
 
 [dependency-groups]
 dev = [
