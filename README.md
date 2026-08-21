@@ -7,6 +7,8 @@ completed sequence once, on the terminal step.
 The package is unbatched. Callers can use `jax.vmap`, and RL libraries such as Modrax can own
 batching, auto-reset, and episode metrics.
 
+The code was ported over from https://github.com/marcojira/tgm/tree/main to support Flax NNX and to isolate the environment components.
+
 ## Supported tasks
 
 - `AMPSequence`: variable-length antimicrobial peptide generation.
@@ -80,3 +82,8 @@ uv run python train_proxies.py all \
 This trains all three proxies from scratch and saves them under `checkpoints/amp`, `checkpoints/gfp`,
 and `checkpoints/utr`. Replace `all` with any subset of `amp`, `gfp`, and `utr` to train selected
 tasks. Use `--max-epochs` or `--batch-size` to override the defaults.
+
+## Acknowledgments
+The biological environments are jax implementations with moderate modifications of the environments of [Biological Sequence Design with GFlowNets
+](https://github.com/MJ10/BioSeq-GFN-AL) as well as the benchmarks of [Design-Bench: Benchmarks for Data-Driven Offline Model-Based Optimization](https://github.com/brandontrabucco/design-bench). The training process for the proxy reward functions comes from the former and the data used from the latter. The BitSequence environment comes from [Trajectory balance: Improved credit assignment in GFlowNets
+](https://arxiv.org/abs/2201.13259). The design of the `SequenceEnv` environment is inspired by the [PGX library](https://github.com/sotetsuk/pgx).
